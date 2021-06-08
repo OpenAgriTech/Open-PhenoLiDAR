@@ -1,0 +1,37 @@
+version: "3"
+services:
+  ros-base:
+    image: openagritech/open-phenolidar-base
+    environment:
+      - "LIDAR_IP=192.168.110.25"
+      - "LIDAR_ANGLE=-1.3735"
+      - "RECORD_BAG=0"
+      - "RECORD_FOLDER=/data/bags"
+    ports:
+      - 9090:9090
+    networks:
+      - rosnet
+    volumes:
+      - /data:/data
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    stop_grace_period: 2m
+  web:
+    image: openagritech/open-phenolidar-dashboard
+    depends_on:
+      - ros-base
+    restart: on-failure
+    environment:
+      - "ROS_MASTER_URI=http://ros-base:11311"
+      - "ROS_HOSTNAME=ros-web"
+      - "ROS_MASTER_HOSTNAME=ros-base"
+      - "DASH_PORT=8050"
+      - "DASH_DEBUG_MODE=False"
+    ports:
+      - 8050:8050
+    networks:
+      - rosnet
+
+networks:
+  rosnet:
+    driver: bridge

@@ -1,0 +1,32 @@
+version: "3"
+services:
+  ros-base:
+    image: openagritech/open-phenolidar-base
+    environment:
+      - "BAG_FILE=/data/bags/Open-PhenoLiDAR_testdata.bag"
+    ports:
+      - 9090:9090
+    networks:
+      - rosnet
+    volumes:
+      - ./demo_data:/data
+
+  web:
+    image: openagritech/open-phenolidar-dashboard
+    depends_on:
+      - ros-base
+    restart: on-failure
+    environment:
+      - "ROS_MASTER_URI=http://ros-base:11311"
+      - "ROS_HOSTNAME=ros-web"
+      - "ROS_MASTER_HOSTNAME=ros-base"
+      - "DASH_PORT=8050"
+      - "DASH_DEBUG_MODE=False"
+    ports:
+      - 8050:8050
+    networks:
+      - rosnet
+
+networks:
+  rosnet:
+    driver: bridge
