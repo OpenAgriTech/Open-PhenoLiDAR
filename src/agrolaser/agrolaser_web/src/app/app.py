@@ -126,9 +126,11 @@ class StatusManager:
 
             self.project_service = roslibpy.Service(self.client, '/project_service', 'agrolaser_node/ProjectService')
             project_request = roslibpy.ServiceRequest({'request_string': 'list', 'project': ''})
-            self.project_list = [{'label': project_name, 'value': project_name} for project_name in sorted(self.project_service.call(project_request)['list_strings'])]
-            if len(self.project_list) == 0:
+            resp = self.project_service.call(project_request)
+            if len(resp['list_strings']) == 0:
                 self.project_list = [{'label': 'Test', 'value': 'Test'}]
+            else:
+                self.project_list = [{'label': project_name, 'value': project_name} for project_name in sorted(resp['list_strings'])]
 
 
 local_vars = StatusManager()
@@ -478,7 +480,7 @@ map_layout = {
     "mapbox": {
         "accesstoken": MAPBOX_ACCESS_TOKEN,
         "style": MAPBOX_STYLE,
-        "center": {"lat": 37.8, "lon": -4.8}, "zoom": 16,
+        "center": {"lat": 37.8, "lon": -4.8}, "zoom": 18,
     },
     "showlegend": False,
     "autosize": True,
@@ -705,6 +707,7 @@ def update_word_map(clicks, toggle, old_figure, data):
 def recording_control(on, project):
     if project != 'new_project':
         if on:
+            print("Start record: " + project)
             local_vars.start_recording(project)
         else:
             local_vars.stop_recording()

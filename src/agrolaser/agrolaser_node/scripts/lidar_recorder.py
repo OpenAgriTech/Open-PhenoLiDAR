@@ -38,7 +38,7 @@ class OdometryTable(tables.IsDescription):
     qz = tables.Float32Col(pos=7)
 
 
-class LidarCSV:
+class LidarRecorder:
     """
     Records the LiDAR point cloud to HDF5.
     The file are created according to the project name and named with the timestamp.
@@ -110,6 +110,11 @@ class LidarCSV:
     def create_new_file(self, project_name):
         self.filename = "{project}_{ts}.h5".format(project=project_name,
                                                    ts=datetime.now().strftime("%Y%m%d_%H%M%S"))
+        try:
+            if not os.path.exists(os.path.join(self.root_folder, project_name)):
+                os.makedirs(os.path.join(self.root_folder, project_name))
+        except Exception as ex:
+            pass
         self.filename = os.path.join(self.root_folder, project_name, self.filename)
         filters = tables.Filters(complevel=1, complib='blosc:lz4', fletcher32=True)
         self.h5_file = tables.open_file(self.filename, mode='w', filters=filters)
@@ -159,7 +164,7 @@ def close_files():
 
 
 if __name__ == '__main__':
-    lidar_csv = LidarCSV()
+    lidar_csv = LidarRecorder()
     rospy.spin()
     rospy.on_shutdown(close_files)
     signal.signal(signal.SIGINT, close_files)
