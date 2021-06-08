@@ -1,0 +1,16 @@
+<launch>
+
+
+  <arg name="scanning_frequency" default="360.0" />
+
+  <node pkg="lms400_driver" type="sick_lms400" name="laserMapping" output="screen">
+    <param name="hostname" value="192.168.123.25" />
+    <param name="enable_eRIS" value="0" /> <!-- options: 0,1 -->
+    <param name="encoder_type" value="2" /> <!-- options: 0,1,2,3,4 -->
+    <param name="filter" value="0" /> <!-- disable filter -->
+    <param name="scanning_frequency" value="$(arg scanning_frequency)" />
+
+    <remap from="/laser_scan" to="/lms400_points" />
+  </node>
+
+</launch>

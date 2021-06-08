@@ -64,9 +64,15 @@ Connect to [http://localhost:8050](http://localhost:8050) to see the dashboard i
 
 Open PhenoLiDAR uses [ROS](https://www.ros.org/about-ros/) for the sensor integration. This provides flexibility for the integration with other sensors. 
 At the moment, the system supports the Sick LMS400 and the PX4 Autopilot for positioning. An RTK GNSS connected to the PX4 
-is required to ensure proper positioning accuracy.
+is required to ensure proper positioning accuracy. Instructions and parameters for the PX4 autopilot are available [here](docs/03-Start-up_PX4_Autopilot.md).
+Keep in mind that other RTK GNSS modules are also an option (eg. [PX4 RTK reference](https://docs.px4.io/master/en/gps_compass/rtk_gps.html)).
+GPS heading from dual antenna is desirable as the magnetometer calibration can be tricky due to the metal parts of your robot/frame.
 
-You can modify the docker-compose file to run Open PhenoLiDAR with real hardware (limited to Sick LMS400 and PX4 autopilots).
+You can change the LMS400 IP address using [Sick SOPAS Engineering tool](https://www.sick.com/ag/en/sopas-engineering-tool/p/p367244). 
+The rest of the parameters such as scan rate and filters are configured by ROS. 
+
+Parameters such as LiDAR IP, angles and devices are specified in the docker-compose file (limited to Sick LMS400 and PX4 autopilots). 
+Alternatively, you can run Open PhenoLiDAR natively on ROS for more advance configurations (see [ROS Implementation](#ros-implementation))
 
 You can use `docker-compose-hardware.yml` as a template:
 
@@ -96,5 +102,9 @@ configuration to make more useful.
 The frequency of the point cloud generation in ROS is not as fast as the actual scan rate from the LiDAR. To get full
 LiDAR resolution it is necessary to post-process the data. 
 
-## How to use with real hardware
+## ROS Implementation
+
+You can use ROS natively without using Docker. Follow the instructions in [ROS Setup](docs/01-ROS_setup.md) to get a
+ROS environment in your computer. The instructions may change slightly depending on your Linux Distribution. 
+
 

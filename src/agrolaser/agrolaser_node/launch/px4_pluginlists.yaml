@@ -1,0 +1,24 @@
+plugin_blacklist:
+# common
+- safety_area
+# extras
+- image_pub
+- vibration
+- distance_sensor
+- rangefinder
+- wheel_odometry
+- 3dr_radio
+- 'setpoint_*'
+- 'px4flow'
+- 'vision_speed'
+- actuator_control
+- hil_controls
+- manual_control
+- rc_io
+- setpoint_*
+- vfr_hud
+- waypoint
+- wheel_odometry
+
+plugin_whitelist: []
+# 'sys_*'

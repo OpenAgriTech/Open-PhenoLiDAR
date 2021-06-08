@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package>
+  <name>lms400_driver</name>
+  <version>1.0.0</version>
+  <description>This package is used to access the Sick LMS400 laser range-finder. It contains all necessary functionality to communicate with the sensor via rosmessages.
+    Based on the asr_sick_lms_400 library, with improvements for encoder reading and performance.
+  </description>
+  <author>Aumann Florian, Krehl Yann, Meißner Pascal, Jose A. Jimenez-Berni</author>
+  <maintainer email="berni@ias.csic.es">Jose A. Jimenez-Berni</maintainer>
+  <license>BSD</license>
+  <url type="website">http://wiki.ros.org/asr_sick_lms_400</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>roslib</build_depend>
+  <build_depend>cmake_modules</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>roslib</run_depend>
+  <run_depend>cmake_modules</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+
+  <export>
+  </export>
+</package>

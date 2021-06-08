@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <arg name="rviz" default="false" />
+  <arg name="rosbridge" default="true" />
+  <arg name="bagfile" default="$(optenv BAG_FILE 0)"/>
+  <arg name="recordbag" default="$(optenv RECORD_BAG 0)"/>
+  <arg name="record_folder" default="$(optenv RECORD_FOLDER /data/bags)"/>
+  <arg name="lidar_ip" default="$(optenv LIDAR_IP 192.168.110.25)"/>
+  <arg name="lidar_angle" default="$(optenv LIDAR_ANGLE -1.3735)"/>
+
+  <group if="$(arg recordbag)">
+    <node pkg="rosbag" type="record" name="recorder" output="screen" args="-a -o $(arg record_folder)/phenolidar"/>
+  </group>
+
+  <group if="$(eval arg('bagfile')!=0)">
+    <param name="/use_sim_time" value="true"/>
+    <node pkg="rosbag" type="play" name="player" output="screen" args="-q --clock --rate 1.0 $(arg bagfile)"/>
+  </group>
+
+  <group if="$(arg rosbridge)">
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" >
+      <!--arg name="topics_glob" default="[/rosout, /pointcloud, /mavros/global_position/raw/fix]" /-->
+    </include>
+    <node pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher"/>
+  </group>
+
+  <node respawn="true" pkg="agrolaser_node" name="lidar_pointcloud" type="lidar_pointcloud.py" output="screen">
+     <param name="lidar_frame" value="lms400_base" />
+     <param name="odom_frame" value="map" />
+  </node>
+  <node respawn="true" pkg="agrolaser_node" name="lidar_recorder" type="lidar_recorder.py" output="screen"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="base_to_laser"
+      args="-0.625 0 -0.23 -1.57 $(arg lidar_angle) -1.57 /base_link /lms400_base 100" />
+
+  <node pkg="tf" type="static_transform_publisher" name="base_to_joint"
+      args="-0.47 0 0 0 0 0 /base_link /joint_sup 100" />
+  <node pkg="tf" type="static_transform_publisher" name="base_to_baseCar"
+      args="0 0 -1.775 0 0 0 /joint_sup /base_car 100" />
+  <node pkg="tf" type="static_transform_publisher" name="base_to_gpsHeading"
+      args="0.16 0 0 0 0 0 /base_link /gps_heading 100" />
+  <node pkg="tf" type="static_transform_publisher" name="base_to_gps2Antena"
+      args="-1.09 0 0 0 0 0 /base_link /gps_2_antena 100" />
+  <node pkg="tf" type="static_transform_publisher" name="base_to_encoder"
+      args="0.4 0.2 -0.2 0 0 0 /base_car /encoder 100" />
+  <node pkg="tf" type="static_transform_publisher" name="base_to_LeftWheel"
+      args="-0.4 0.35 -0.1 0 0 0 /base_car /left_wheel 100" />
+  <node pkg="tf" type="static_transform_publisher" name="base_to_RightWheel"
+      args="-0.4 -0.35 -0.1 0 0 0 /base_car /right_wheel 100" />
+
+  <group if="$(arg rviz)">
+    <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find agrolaser_node)/rviz_cfg/agrolaser_ekf.rviz" />
+  </group>
+
+    <group unless="$(eval arg('bagfile')!=0)">
+        <!-- MAVROS node -->
+        <arg name="fcu_url" default="/dev/ttyUSB0:921600" />
+        <arg name="gcs_url" default="" />-
+        <arg name="tgt_system" default="1" />
+        <arg name="tgt_component" default="1" />
+        <arg name="log_output" default="screen" />
+        <arg name="fcu_protocol" default="v2.0" />
+        <arg name="respawn_mavros" default="false" />
+        <arg name="pluginlists_yaml" value="$(find agrolaser_node)/launch/px4_pluginlists.yaml" />
+        <arg name="config_yaml" value="$(find agrolaser_node)/launch/px4_config.yaml" />
+
+        <node pkg="mavros" type="mavros_node" name="mavros" required="$(eval not respawn_mavros)" clear_params="true" output="$(arg log_output)" respawn="$(arg respawn_mavros)">
+            <param name="fcu_url" value="$(arg fcu_url)" />
+            <param name="gcs_url" value="$(arg gcs_url)" />
+            <param name="target_system_id" value="$(arg tgt_system)" />
+            <param name="target_component_id" value="$(arg tgt_component)" />
+            <param name="fcu_protocol" value="$(arg fcu_protocol)" />
+
+            <!-- load blacklist, config -->
+            <rosparam command="load" file="$(arg pluginlists_yaml)" />
+            <rosparam command="load" file="$(arg config_yaml)" />
+        </node>
+
+       <node pkg="lms400_driver" type="sick_lms400" name="laserMapping" output="screen" >
+        <param name="hostname" value="$(arg lidar_ip)" />
+        <param name="filter" value="0" /> <!-- disable filter -->
+        <param name="enable_eRIS" value="0" /> <!-- options: 0,1 -->
+        <param name="encoder_type" value="2" /> <!-- options: 0,1,2,3,4 -->
+        <param name="scanning_frequency" value="420.0" />
+
+
+        <remap from="/laser_scan" to="/lms400_points" />
+      </node>
+    </group>
+
+</launch>
