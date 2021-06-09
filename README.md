@@ -60,6 +60,8 @@ Run `docker-compose up` in the same folder where `docker-compose.yml` is.
 
 Connect to [http://localhost:8050](http://localhost:8050) to see the dashboard interface.
 
+![](pictures/Dashboard_screenshot.png)
+
 ## Hardware requirements and setup
 
 Open PhenoLiDAR uses [ROS](https://www.ros.org/about-ros/) for the sensor integration. This provides flexibility for the integration with other sensors. 
