@@ -1,5 +1,9 @@
 # Open-PhenoLiDAR
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5101085.svg)](https://doi.org/10.5281/zenodo.5101085)
+
+Citation: Jose A. J. Berni, & Sergio Bellido. (2021, July 14). OpenAgriTech/Open-PhenoLiDAR: Public realease for Zenodo (Version 0.1.1). Zenodo. http://doi.org/10.5281/zenodo.5101085
+
 ## What is Open  PhenoLiDAR?
 
 **Open PhenoLiDAR**, an open-source pipeline for integrating LiDAR sensors in plant phenotyping and, more broadly, for
