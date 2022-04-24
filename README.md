@@ -113,4 +113,5 @@ LiDAR resolution it is necessary to post-process the data.
 You can use ROS natively without using Docker. Follow the instructions in [ROS Setup](docs/01-ROS_setup.md) to get a
 ROS environment in your computer. The instructions may change slightly depending on your Linux Distribution. 
 
-
+## Project funding
+This software was developed as part of the project AGL2017-85222-R funded by MCIN/AEI/10.13039/501100011033 and "ERDF A way of making Europe".
